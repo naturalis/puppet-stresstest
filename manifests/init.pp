@@ -43,31 +43,34 @@ class stresstest (
   $starthour       = 12,
   $startminute     = 0,
 ){
-  class { 'stresstest::packages': }
-
   if $cputest {
     $_cputest = " --cpu ${processorcount}"
   }
   if $memorytest {
-    $amounttotest = "${memorysize_mb} * 0.75"
+    $amounttotest = $memorysize_mb * 0.50
     $_memorytest = " -m 1 --vm-bytes ${amounttotest}M"
   }
 
   if $disktest {
-    $postcommand = "&& /usr/local/sbin/disktest.sh"
+    $postcommand = " && /usr/local/sbin/disktest.sh"
     file { '/usr/local/sbin/disktest.sh' :
       content     => template("stresstest/disktest.sh.erb"),
       mode        => 700,
     }
   }
+
+
   if ($_memorytest or $_cputest) {
+    package { 'stress':
+      ensure     => present
+    }
     $stressoptions = "${_cputest} ${_memorytest} --timeout ${duration}"
     cron { 'stresstest' :
       command    => template("stresstest/runstress.sh.erb"),
       user       => 'root',
       minute     => $startminute,
       hour       => $starthour,
-      ensure     => Package['stress'],
+      require    => Package['stress']
     }
   }
   if (!$_memorytest or !$_cputest) {
@@ -76,7 +79,7 @@ class stresstest (
       user       => 'root',
       minute     => $startminute,
       hour       => $starthour,
-      ensure     => File['/usr/local/sbin/disktest.sh'],
+      require    => File['/usr/local/sbin/disktest.sh'],
     }
   }
 
