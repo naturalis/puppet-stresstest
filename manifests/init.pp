@@ -20,13 +20,15 @@ class stresstest (
   }
 
   if $disktest {
+    package { 'smartmontools':
+      ensure      => present
+    }
     $postcommand = " && /usr/local/sbin/disktest.sh"
     file { '/usr/local/sbin/disktest.sh' :
       content     => template("stresstest/disktest.sh.erb"),
       mode        => 700,
     }
   }
-
 
   if ($_memorytest or $_cputest) {
     package { 'stress':
