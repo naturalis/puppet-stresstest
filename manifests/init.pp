@@ -15,7 +15,7 @@ class stresstest (
     $_cputest = " --cpu ${processorcount}"
   }
   if $memorytest {
-    $amounttotest = $memorysize_mb * 0.50
+    $amounttotest = $memorysize_mb * 0.80
     $_memorytest = " -m 1 --vm-bytes ${amounttotest}M"
   }
 
