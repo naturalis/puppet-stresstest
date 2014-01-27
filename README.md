@@ -11,23 +11,20 @@ All parameters have sensible defaults and can be overwritten by foreman or Hiera
 
 Classes
 -------------
-stresstest
-- 
+- stresstest
 
 Dependencies
 -------------
-stress ( installed by module )
-hdparm ( default linux )
-badblocks ( default linux )
-- 
+- stress ( installed by module )
+- hdparm ( default linux )
+- badblocks ( default linux )
 
 Limitations
 -------------
 This module has been built on and tested against Puppet ... and higher.
 
 The module has been tested on:
-- ubuntu 12.04LTS
-- 
+ubuntu 12.04LTS
 
 Authors
 -------------
