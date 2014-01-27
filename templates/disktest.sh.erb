@@ -6,29 +6,22 @@ smartctl -t short /dev/<%= disk %>&
 wait
 
 <% [@disks].flatten.each do |disk| -%>
-/sbin/hdparm -tT /dev/<%= disk %> >/tmp/hdparm_<%= disk %>&
+/sbin/hdparm -tT /dev/<%= disk %> > /tmp/hdparm_<%= disk %>&
 <% end -%>
 wait
-cat /tmp/hdparm_* /tmp/hdparm_all.txt
+cat /tmp/hdparm_* > /tmp/hdparm_all.txt
 mail root < /tmp/hdparm_all.txt
 
 <% [@disks].flatten.each do |disk| -%>
-/sbin/hdparm -tT /dev/<%= disk %> >/tmp/hdparm_<%= disk %>&
+echo /sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
 <% end -%>
-wait
-cat /tmp/hdparm_* /tmp/hdparm_all.txt
-mail root < /tmp/hdparm_all.txt
-
-<% [@disks].flatten.each do |disk| -%>
-/sbin/badblocks -vw /dev/<%= disk %> >/tmp/badblocks_<%= disk %>&
-<% end -%>
-cat /tmp/badblocks_* /tmp/badblocks_all.txt
+cat /tmp/badblocks_* > /tmp/badblocks_all.txt
 mail root < /tmp/badblocks_all.txt
 wait
 
 <% [@disks].flatten.each do |disk| -%>
-smartctl -l selftest /dev/<%= disk %> >/tmp/smartlog_<%= disk %>&
+smartctl -x /dev/<%= disk %> > /tmp/smartlog_<%= disk %>&
 <% end -%>
-cat /tmp/smartlog_* /tmp/smartlog_all.txt
+cat /tmp/smartlog_* > /tmp/smartlog_all.txt
 mail root < /tmp/smartlog_all.txt
 wait
