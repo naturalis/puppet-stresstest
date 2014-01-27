@@ -1,0 +1,10 @@
+<% [@disks].flatten.each do |disk| -%>
+hdparm -tT /dev/<%= disk %>&
+
+<% end -%>
+echo "end of hdparm commands"
+<% [@disks].flatten.each do |disk| -%>
+badblocks -vw /dev/<%= disk %>&
+
+<% end -%>
+echo "end of badblocks commands"
