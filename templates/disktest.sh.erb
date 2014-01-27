@@ -10,18 +10,18 @@ wait
 <% end -%>
 wait
 cat /tmp/hdparm_* > /tmp/hdparm_all.txt
-mail root < /tmp/hdparm_all.txt
+mail -s "<%= @hostname -%> stresstest hdparmlog" root < /tmp/hdparm_all.txt
 
 <% [@disks].flatten.each do |disk| -%>
-echo /sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
+/sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
 <% end -%>
 cat /tmp/badblocks_* > /tmp/badblocks_all.txt
-mail root < /tmp/badblocks_all.txt
+mail -s "<%= @hostname -%> stresstest badblockslog"  root < /tmp/badblocks_all.txt
 wait
 
 <% [@disks].flatten.each do |disk| -%>
 smartctl -x /dev/<%= disk %> > /tmp/smartlog_<%= disk %>&
 <% end -%>
 cat /tmp/smartlog_* > /tmp/smartlog_all.txt
-mail root < /tmp/smartlog_all.txt
+mail -s "<%= @hostname -%> stresstest smartlog" root < /tmp/smartlog_all.txt
 wait

@@ -3,7 +3,7 @@ puppet-stresstest
 
 Puppet module for stresstesting hardware
 tests are scheduled and run using the crontab, install mail functionality for reporting the test results. A good combination is using the ssmtp module, the garex/puppet-module-ssmtp is a good example.
-
+the disk tests logs to /tmp, the logs are combined and send to the root user. 
 
 Parameters
 -------------
@@ -16,12 +16,14 @@ Classes
 Dependencies
 -------------
 - stress ( installed by module )
+- smartmontools ( installed by module )
 - hdparm ( default linux )
 - badblocks ( default linux )
 
+
 Limitations
 -------------
-This module has been built on and tested against Puppet ... and higher.
+This module has been built on and tested against Puppet 3.4.2 and higher.
 
 The module has been tested on:
 ubuntu 12.04LTS
