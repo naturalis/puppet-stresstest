@@ -1,10 +1,11 @@
 #!/bin/bash
-
+# initiate smart test 
 <% [@disks].flatten.each do |disk| -%>
-smartctl -t short /dev/<%= disk %>&
+/usr/sbin/smartctl -t short /dev/<%= disk %>&
 <% end -%>
 wait
 
+# test disk cache
 <% [@disks].flatten.each do |disk| -%>
 /sbin/hdparm -tT /dev/<%= disk %> > /tmp/hdparm_<%= disk %>&
 <% end -%>
@@ -12,16 +13,13 @@ wait
 cat /tmp/hdparm_* > /tmp/hdparm_all.txt
 mail -s "<%= @hostname -%> stresstest hdparmlog" root < /tmp/hdparm_all.txt
 
-<% [@disks].flatten.each do |disk| -%>
-/sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
-<% end -%>
-cat /tmp/badblocks_* > /tmp/badblocks_all.txt
-mail -s "<%= @hostname -%> stresstest badblockslog"  root < /tmp/badblocks_all.txt
-wait
+# wait for 3 minutes so the smart test can finish
+sleep 3m
 
+# gather smart information
 <% [@disks].flatten.each do |disk| -%>
-smartctl -x /dev/<%= disk %> > /tmp/smartlog_<%= disk %>&
+/usr/sbin/smartctl -x /dev/<%= disk %> > /tmp/smartlog_<%= disk %>&
 <% end -%>
+wait
 cat /tmp/smartlog_* > /tmp/smartlog_all.txt
 mail -s "<%= @hostname -%> stresstest smartlog" root < /tmp/smartlog_all.txt
-wait
