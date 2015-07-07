@@ -61,7 +61,8 @@ class stresstest (
     }
   }
 
-  if ($badblocktest) {
+
+  if $badblocktest {
     file { '/usr/local/sbin/badblocktest.sh' :
       content    => template("stresstest/badblocktest.sh.erb"),
       mode       => 700,
@@ -74,14 +75,26 @@ class stresstest (
       month      => $startmonth,
       monthday   => $startmonthday,
     }
+  }
+
+  if $badblockruntime > 0 {
+    $killat = $starthour + $badblockruntime
+    if ($killat > 24) {
+      $killat = $killat - 24
+      $killatday = $startmonthday+1
+    } else {
+      $killatday = $startmonthday
+    }
+    if ($killat > 24) { 
+      $killat = 24
+    }
     cron { 'badblock kill process' :
       command    => "/usr/bin/killall /sbin/badblocks",
       user       => 'root',
       minute     => $startminute,
       hour       => $starthour + $badblockruntime,
       month      => $startmonth,
-      monthday   => $startmonthday,
+      monthday   => $killatday,
     }
   }
-
 }
