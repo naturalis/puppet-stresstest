@@ -25,8 +25,8 @@ Limitations
 This module has been built on and tested against Puppet 3.4.2 and higher.
 
 The module has been tested on:
-ubuntu 12.04LTS
-ubuntu 14.04LTS
+- ubuntu 12.04LTS
+- ubuntu 14.04LTS
 
 Authors
 -------------
