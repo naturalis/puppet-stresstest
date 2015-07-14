@@ -1,3 +1,41 @@
-stress <%= @stressoptions -%> > /tmp/stress.txt
-mail -s "<%= @hostname -%> stresstest CPU and Memory" root < /tmp/stress.txt
+#!/bin/bash
 
+# stresstest
+stress <%= @stressoptions -%> > /tmp/stresstest.log
+
+# initiate smart test
+
+<% if @disktest == true %>
+  <% [@disks].flatten.each do |disk| -%>
+    /usr/sbin/smartctl -t short /dev/<%= disk %>&
+  <% end -%>
+  wait
+
+  # test disk cache
+  <% [@disks].flatten.each do |disk| -%>
+    /sbin/hdparm -tT /dev/<%= disk %> > /tmp/hdparm_<%= disk %>&
+  <% end -%>
+  wait
+  cat /tmp/hdparm_* >> /tmp/stresstest.log
+
+
+  # wait for 3 minutes so the smart test can finish
+  sleep 3m
+
+  # gather smart information
+  <% [@disks].flatten.each do |disk| -%>
+    /usr/sbin/smartctl -x /dev/<%= disk %> > /tmp/smartlog_<%= disk %>&
+  <% end -%>
+  wait
+  cat /tmp/smartlog_* >> /tmp/stresstest.log
+<% end -%>
+
+<% if @badblocktest == true %>
+  <% [@disks].flatten.each do |disk| -%>
+    /sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
+  <% end -%>
+  wait
+  cat /tmp/badblocks_* >> /tmp/stresstest.log
+<% end -%>
+
+echo "Tests completed, log file in /tmp/stresstest.log"

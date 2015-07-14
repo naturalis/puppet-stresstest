@@ -1,7 +1,0 @@
-#!/bin/bash
-<% [@disks].flatten.each do |disk| -%>
-/sbin/badblocks -vw /dev/<%= disk %> > /tmp/badblocks_<%= disk %>&
-<% end -%>
-wait
-cat /tmp/badblocks_* > /tmp/badblocks_all.txt
-mail -s "<%= @hostname -%> stresstest badblockslog"  root < /tmp/badblocks_all.txt
